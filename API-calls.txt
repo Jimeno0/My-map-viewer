@@ -1,0 +1,17 @@
+https://rambo-test.carto.com:443/api/v2/sql?format=GeoJSON&q=select the_geom, cartodb_id from public.mnmappluto LIMIT 10
+
+https://rambo-test.carto.com:443/api/v2/sql?format=GeoJSON&q=select the_geom, the_geom_webmercator, cartodb_id from public.mnmappluto LIMIT 10
+
+https://rambo-test.carto.com:443/api/v2/sql?q=select the_geom_webmercator from public.mnmappluto LIMIT 10
+
+
+
+https://rambo-test.carto.com:443/api/v2/sql?q=SELECT the_geom, ST_Transform(the_geom, 3857) as the_geom_webmercator from public.mnmappluto LIMIT 10
+
+
+
+https://rambo-test.carto.com:443/api/v2/sql?q=select ST_YMax(geom) from public.mnmappluto LIMIT 10 
+
+
+
+https://rambo-test.carto.com:443/api/v2/sql?q=select ST_Extent(the_geom) from public.mnmappluto
