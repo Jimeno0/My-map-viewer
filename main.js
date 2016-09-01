@@ -15,7 +15,10 @@
   var dataAjaxSettings = {
     "async": true,
     "crossDomain": true,
-    "url": "https://rambo-test.carto.com:443/api/v2/sql?format=GeoJSON&q=select%20the_geom%2C%20cartodb_id%20from%20public.mnmappluto%20LIMIT%2010",
+    //One item
+    // "url": "https://rambo-test.carto.com:443/api/v2/sql?format=GeoJSON&q=select%20the_geom%2C%20cartodb_id%20from%20public.mnmappluto%20LIMIT%201",
+    // Ten items
+    "url": "https://rambo-test.carto.com:443/api/v2/sql?format=GeoJSON&q=select%20the_geom%2C%20cartodb_id%20from%20public.mnmappluto",
     "method": "GET",
     
   };
@@ -30,7 +33,7 @@
     for (i = 0; i < extent.length; i++) {
       extent[i] = Number(extent[i]);
     }
-
+    
     bounds.xMin= extent[0];
     bounds.yMin= extent[1];
     bounds.xMax= extent[2];
@@ -44,6 +47,7 @@
     bounds.yMin= minimBounds.y;
     bounds.xMax= maximBounds.x;
     bounds.yMax= maximBounds.y;
+
   });
 
 
@@ -61,22 +65,8 @@
   });
 
 
-
-
-
-
-
   // var canvas = document.createElement('canvas');
   var canvas = document.getElementById('myCanvas');
-
-
-
-
-  // var c = document.getElementById("myCanvas");
-  // var ctx = c.getContext("2d");
-  // ctx.fillStyle = "#FF0000";
-  // ctx.fillRect(0,0,150,75);
-
 
 
   function draw (width, height, bounds, data) {
@@ -85,7 +75,7 @@
     // Get the drawing context from our <canvas> and
     // set the fill to determine what color our map will be.
     context = canvas.getContext('2d');
-    context.fillStyle = '#333';
+    context.fillStyle = '#FF0000';
 
     // Determine how much to scale our coordinates by
     xScale = width / Math.abs(bounds.xMax - bounds.xMin);
@@ -124,21 +114,21 @@
 
           context.beginPath();
           context.moveTo(point.x, point.y);
-          console.log(point.x, point.y);
+          
 
         // Otherwise just keep drawing
         } else {
           // this.context.lineTo(point.x, point.y); 
 
           context.lineTo(point.x, point.y); 
-          console.log(point.x, point.y);
+          
         }
       }
 
       // Fill the path we just finished drawing with color
       // this.context.fill();
       context.fill();
-      console.log("--------------");
+      context.stroke();
     }
   }
 
