@@ -35,6 +35,15 @@
     bounds.yMin= extent[1];
     bounds.xMax= extent[2];
     bounds.yMax= extent[3];
+
+
+    minimBounds = mercator(bounds.xMin, bounds.yMin);
+    maximBounds = mercator(bounds.xMax, bounds.yMax);
+
+    bounds.xMin= minimBounds.x;
+    bounds.yMin= minimBounds.y;
+    bounds.xMax= maximBounds.x;
+    bounds.yMax= maximBounds.y;
   });
 
 
@@ -99,11 +108,13 @@
         longitude = coords[j][0];
         latitude = coords[j][1];
 
+        point = mercator(longitude, latitude);
+
         // Scale the points of the coordinate
         // to fit inside our bounding box
         point = {
-            x: ((longitude - bounds.xMin) * scale),
-            y: ((bounds.yMax - latitude) * scale)
+          x: (point.x - bounds.xMin) * scale,
+          y: (bounds.yMax - point.y) * scale
         };
 
         // If this is the first coordinate in a shape, start a new path
