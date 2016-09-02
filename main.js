@@ -3,7 +3,12 @@
 
 
 // (function (){
-  var data, bounds = {}, width = 800, height = 400;
+  var data, bounds = {},panX = 0, panY = 0, scaleFactor = 1.00, width = 700, height = 500;
+
+  var canvas = document.getElementById('myCanvas');
+
+  canvas.width = width;
+  canvas.height = height;
 
   var extSettings = {
     "async": true,
@@ -17,7 +22,7 @@
     "crossDomain": true,
     //One item
     // "url": "https://rambo-test.carto.com:443/api/v2/sql?format=GeoJSON&q=select%20the_geom%2C%20cartodb_id%20from%20public.mnmappluto%20LIMIT%201",
-    // Ten items
+    // all items
     "url": "https://rambo-test.carto.com:443/api/v2/sql?format=GeoJSON&q=select%20the_geom%2C%20cartodb_id%20from%20public.mnmappluto",
     "method": "GET",
     
@@ -64,18 +69,69 @@
   
   });
 
+  $("#home").click(function(){
+    panX = 0;
+    panY = 0;
+    scaleFactor = 1;
+    draw (width, height, bounds, data, panX, panY, scaleFactor); 
+  });
 
-  // var canvas = document.createElement('canvas');
-  var canvas = document.getElementById('myCanvas');
 
 
-  function draw (width, height, bounds, data) {
+
+  $("#transLeft").click(function(){
+    panX = -10;
+    panY = 0;
+    draw (width, height, bounds, data, panX, panY); 
+  });
+  $("#transRight").click(function(){
+    panX = 10;
+    panY = 0;
+    draw (width, height, bounds, data, panX, panY); 
+  });
+  
+
+  $("#transDown").click(function(){
+    panX = 0;
+    panY = 10;
+    draw (width, height, bounds, data, panX, panY); 
+  });
+  $("#transUp").click(function(){
+    panX = 0;
+    panY = -10;
+    draw (width, height, bounds, data, panX, panY); 
+  });
+
+  $("#zoomUp").click(function(){
+    panX = 0;
+    panY = 0;
+    scaleFactor = 1.1;
+    
+    draw (width, height, bounds, data, panX, panY, scaleFactor); 
+  });
+
+  $("#zoomDown").click(function(){
+    panX = 0;
+    panY = 0;
+    scaleFactor = 0.9;
+    draw (width, height, bounds, data, panX, panY, scaleFactor); 
+  });  
+ 
+
+
+  function draw (width, height, bounds, data, panX, panY, scaleFactor) {
     var context, coords, point, latitude, longitude, xScale, yScale, scale;
 
     // Get the drawing context from our <canvas> and
     // set the fill to determine what color our map will be.
+
     context = canvas.getContext('2d');
+    context.clearRect(0, 0, width, height);
+    
     context.fillStyle = '#FF0000';
+    // context.save();
+    context.translate(panX, panY);
+    context.scale(scaleFactor, scaleFactor);
 
     // Determine how much to scale our coordinates by
     xScale = width / Math.abs(bounds.xMax - bounds.xMin);
@@ -128,7 +184,8 @@
       // Fill the path we just finished drawing with color
       // this.context.fill();
       context.fill();
-      context.stroke();
+      // context.restore();
+      //context.stroke();
     }
   }
 
@@ -145,26 +202,6 @@
 
     return point;
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

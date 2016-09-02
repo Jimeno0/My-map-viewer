@@ -1,23 +1,46 @@
 <!DOCTYPE html>
 <html>
 
-<style type="text/css"></style>
+<style type="text/css">
+  #myCanvas{
+    display: block;
+    border:5px solid #000000;
+    /*width: 800px;*/
+    /*height:600px;*/
+    margin:auto;
+  }
+</style>
 
 
 
 <body>
 
-<canvas id="myCanvas" width="800px" height="400px" style="border:1px solid #000000;">
+<canvas id="myCanvas" >
 Your browser does not support the HTML5 canvas tag.
 </canvas>
 
+<div style="float:left;">
+<button id="transLeft">Translate left</button>
+<button id="transRight">Translate right</button>
+<br>
+<button id="transUp">Translate up</button>
+
+<button id="transDown">Translate down</button>
+</div>
+
+<div style="float:right;">
+<button id="zoomUp">zoom up</button>
+<button id="zoomDown">zoom down</button>
+</div>
+
+<div id="homediv">
+  <button id="home">Home</button>
+</div>
 
 
 
 
-
-
-<script   src="https://code.jquery.com/jquery-3.1.0.js"   integrity="sha256-slogkvB1K3VOkzAI8QITxV3VzpOnkeNVsKvtkYLMjfk="   crossorigin="anonymous"></script>
+<script   src="bower_components/jquery/dist/jquery.min.js"   "></script>
 <script   src="main.js"></script>
 </body>
 </html>
