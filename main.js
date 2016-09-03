@@ -1,14 +1,94 @@
 
-
-
+//TRANSFORM: set transform¿?¿?¿?
+//context.transform(scaleFactor,0,0,scaleFactor,-(scaleFactor-1)*canvas.width/2,-(scaleFactor-1)*canvas.height/2);
 
 // (function (){
   var data, bounds = {},panX = 0, panY = 0, scaleFactor = 1.00, width = 700, height = 500;
+  var initX, initY, endX, endY, lastX = 0, lastY= 0;
+
+
+  
 
   var canvas = document.getElementById('myCanvas');
+  var context = canvas.getContext('2d');
 
   canvas.width = width;
   canvas.height = height;
+
+  
+
+  canvas.addEventListener('mousedown',function (evt){
+    
+    initX = evt.offsetX;
+    initY = evt.offsetY;
+
+  });
+
+  canvas.addEventListener('mouseup',function (evt){
+
+    endX = evt.offsetX;
+    endY = evt.offsetY;
+
+    panX = (endX - initX) + lastX;
+    panY = (endY - initY) + lastY;
+
+    if ((endX - initX)!==0) {
+      translate();
+      lastX = panX;
+      lastY = panY;
+    }
+    
+    // draw (width, height, bounds, data, panX, panY, scaleFactor); 
+
+
+
+
+  });
+  canvas.addEventListener('dblclick',function (evt){
+
+    zoomCenterX = -evt.offsetX;  
+    zoomCenterY = -evt.offsetY;
+
+    console.log(zoomCenterX,zoomCenterY);
+
+
+    scaleFactor *= 1.5;
+    scale();
+    // draw (width, height, bounds, data, zoomCenterX, zoomCenterY,scaleFactor);
+
+
+
+
+    //context.transform(scaleFactor,0,0,scaleFactor,-(scaleFactor-1)*canv‌​as.width/2,-(zoomfac‌​tor-1)*canvas.height‌​/2)
+
+    // draw (width, height, bounds, data, evt.offsetX, evt.offsetY, scaleFactor);       
+
+  }, false);
+
+
+  $(document).on('keydown', function ( e ) {
+    
+
+    if ((e.metaKey || e.ctrlKey) && ( e.which == 187 || e.which == 43 || e.which == 61) ) {
+        
+        zoomCenterX = width/2;  
+        zoomCenterY = height/2;
+
+        scaleFactor *= 1.5;
+
+        
+
+        draw (width, height, bounds, data, panX, panY, scaleFactor); 
+    }
+    else if ((e.metaKey || e.ctrlKey) && ( e.which == 189) ) {
+      
+      zoomCenterX = width/2;  
+      zoomCenterY = height/2;
+
+      scaleFactor /= 1.5;
+      draw (width, height, bounds, data, panX, panY, scaleFactor); 
+    }
+  });
 
   var extSettings = {
     "async": true,
@@ -65,73 +145,103 @@
     console.log("suuuuuuuup");
     console.log(bounds);
     console.log(data);
-    draw(width, height, bounds, data);
+    translate();
+    // draw(width, height, bounds, data);
   
   });
 
   $("#home").click(function(){
     panX = 0;
     panY = 0;
+    lastX = 0;
+    lastY = 0;
     scaleFactor = 1;
-    draw (width, height, bounds, data, panX, panY, scaleFactor); 
+    translate();
+    // draw (width, height, bounds, data, panX, panY, scaleFactor); 
   });
 
 
 
 
   $("#transLeft").click(function(){
-    panX = -10;
-    panY = 0;
-    draw (width, height, bounds, data, panX, panY); 
+
+    panX -= 10;
+    translate();
+    // draw (width, height, bounds, data, panX, panY, scaleFactor); 
   });
   $("#transRight").click(function(){
-    panX = 10;
-    panY = 0;
-    draw (width, height, bounds, data, panX, panY); 
+
+    panX +=10;
+    translate();
+    // draw (width, height, bounds, data, panX, panY, scaleFactor); 
   });
   
 
   $("#transDown").click(function(){
-    panX = 0;
-    panY = 10;
-    draw (width, height, bounds, data, panX, panY); 
+
+    panY += 10;
+    translate();
+    // draw (width, height, bounds, data, panX, panY, scaleFactor); 
   });
   $("#transUp").click(function(){
-    panX = 0;
-    panY = -10;
-    draw (width, height, bounds, data, panX, panY); 
+
+    panY -=10;
+    translate();
+    // draw (width, height, bounds, data, panX, panY, scaleFactor); 
   });
 
   $("#zoomUp").click(function(){
-    panX = 0;
-    panY = 0;
-    scaleFactor = 1.1;
-    
-    draw (width, height, bounds, data, panX, panY, scaleFactor); 
+    scaleFactor *= 1.5;
+    scale();
+    // draw (width, height, bounds, data, panX, panY, scaleFactor); 
   });
 
   $("#zoomDown").click(function(){
-    panX = 0;
-    panY = 0;
-    scaleFactor = 0.9;
-    draw (width, height, bounds, data, panX, panY, scaleFactor); 
+    scaleFactor /= 1.5;
+    scale();
+    // draw (width, height, bounds, data, panX, panY, scaleFactor); 
   });  
  
 
 
+
+  function translate (){
+
+    context.clearRect(0, 0, width, height);
+    context.fillStyle = '#FF0000';
+    context.save();
+    context.translate(panX, panY);
+    
+    draw (width, height, bounds, data, panX, panY, scaleFactor);
+
+
+  }
+
+  function scale (){
+    context.clearRect(0, 0, width, height);
+    context.fillStyle = '#FF0000';
+    context.save();
+    context.transform(scaleFactor,0,0,scaleFactor,-(scaleFactor-1)*canvas.width/2,-(scaleFactor-1)*canvas.height/2);
+    draw (width, height, bounds, data, panX, panY, scaleFactor);
+  }
+
+
+
   function draw (width, height, bounds, data, panX, panY, scaleFactor) {
-    var context, coords, point, latitude, longitude, xScale, yScale, scale;
+    var coords, point, latitude, longitude, xScale, yScale, scale;
 
     // Get the drawing context from our <canvas> and
     // set the fill to determine what color our map will be.
 
-    context = canvas.getContext('2d');
-    context.clearRect(0, 0, width, height);
     
-    context.fillStyle = '#FF0000';
+    // context.clearRect(0, 0, width, height);
+    // context.fillStyle = '#FF0000';
     // context.save();
-    context.translate(panX, panY);
-    context.scale(scaleFactor, scaleFactor);
+    // context.translate(panX, panY);
+    // context.scale(scaleFactor, scaleFactor);
+
+  
+    
 
     // Determine how much to scale our coordinates by
     xScale = width / Math.abs(bounds.xMax - bounds.xMin);
@@ -184,9 +294,11 @@
       // Fill the path we just finished drawing with color
       // this.context.fill();
       context.fill();
-      // context.restore();
+      
       //context.stroke();
     }
+
+    context.restore();
   }
 
 

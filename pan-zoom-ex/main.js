@@ -46,8 +46,8 @@ function drawTranslated() {
 
     ctx.clearRect(0, 0, cw, ch);
     ctx.save();
-    ctx.translate(panX, panY);
-    ctx.scale(scaleFactor, scaleFactor);
+    // ctx.translate(panX, panY);
+    ctx.setTransform(scaleFactor,0,0,scaleFactor,-(scaleFactor-1)*canvas.width/2,-(scaleFactor-1)*canvas.height/2);
     ctx.beginPath();
     ctx.rect(circleX - radius, circleY - radius, radius * 2, radius * 2);
     ctx.closePath();
