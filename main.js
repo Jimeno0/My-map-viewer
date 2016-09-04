@@ -1,94 +1,26 @@
 
 //TRANSFORM: set transform¿?¿?¿?
-//context.transform(scaleFactor,0,0,scaleFactor,-(scaleFactor-1)*canvas.width/2,-(scaleFactor-1)*canvas.height/2);
 
 // (function (){
-  var data, bounds = {},panX = 0, panY = 0, scaleFactor = 1.00, width = 700, height = 500;
-  var initX, initY, endX, endY, lastX = 0, lastY= 0;
+  var data, bounds = {}, panX = 0, panY = 0, scaleFactor = 1.00, lastX = 0, lastY= 0;
+  var initX, initY, endX, endY;
 
 
-  
+  var headderHeight = document.getElementById('headderBar').clientHeight;
+  var width = $(document).width();
+  var height = $(document).height() - headderHeight;
+
+
 
   var canvas = document.getElementById('myCanvas');
   var context = canvas.getContext('2d');
 
   canvas.width = width;
   canvas.height = height;
+  canvasMiddleX = canvas.width/2 ;
+  canvasMiddleY = canvas.height/2;
 
-  
-
-  canvas.addEventListener('mousedown',function (evt){
-    
-    initX = evt.offsetX;
-    initY = evt.offsetY;
-
-  });
-
-  canvas.addEventListener('mouseup',function (evt){
-
-    endX = evt.offsetX;
-    endY = evt.offsetY;
-
-    panX = (endX - initX) + lastX;
-    panY = (endY - initY) + lastY;
-
-    if ((endX - initX)!==0) {
-      translate();
-      lastX = panX;
-      lastY = panY;
-    }
-    
-    // draw (width, height, bounds, data, panX, panY, scaleFactor); 
-
-
-
-
-  });
-  canvas.addEventListener('dblclick',function (evt){
-
-    zoomCenterX = -evt.offsetX;  
-    zoomCenterY = -evt.offsetY;
-
-    console.log(zoomCenterX,zoomCenterY);
-
-
-    scaleFactor *= 1.5;
-    scale();
-    // draw (width, height, bounds, data, zoomCenterX, zoomCenterY,scaleFactor);
-
-
-
-
-    //context.transform(scaleFactor,0,0,scaleFactor,-(scaleFactor-1)*canv‌​as.width/2,-(zoomfac‌​tor-1)*canvas.height‌​/2)
-
-    // draw (width, height, bounds, data, evt.offsetX, evt.offsetY, scaleFactor);       
-
-  }, false);
-
-
-  $(document).on('keydown', function ( e ) {
-    
-
-    if ((e.metaKey || e.ctrlKey) && ( e.which == 187 || e.which == 43 || e.which == 61) ) {
-        
-        zoomCenterX = width/2;  
-        zoomCenterY = height/2;
-
-        scaleFactor *= 1.5;
-
-        
-
-        draw (width, height, bounds, data, panX, panY, scaleFactor); 
-    }
-    else if ((e.metaKey || e.ctrlKey) && ( e.which == 189) ) {
-      
-      zoomCenterX = width/2;  
-      zoomCenterY = height/2;
-
-      scaleFactor /= 1.5;
-      draw (width, height, bounds, data, panX, panY, scaleFactor); 
-    }
-  });
+  //AJAX REQUESTS
 
   var extSettings = {
     "async": true,
@@ -100,15 +32,12 @@
   var dataAjaxSettings = {
     "async": true,
     "crossDomain": true,
-    //One item
-    // "url": "https://rambo-test.carto.com:443/api/v2/sql?format=GeoJSON&q=select%20the_geom%2C%20cartodb_id%20from%20public.mnmappluto%20LIMIT%201",
-    // all items
-    "url": "https://rambo-test.carto.com:443/api/v2/sql?format=GeoJSON&q=select%20the_geom%2C%20cartodb_id%20from%20public.mnmappluto",
+    "url": "https://rambo-test.carto.com:443/api/v2/sql?format=GeoJSON&q=select%20the_geom%2C%20numfloors%20from%20public.mnmappluto",
     "method": "GET",
     
   };
-
-  $.ajax(extSettings).done(function (response) {
+  // extent request
+  $.ajax(extSettings).then(function (response) {
     var extent = response.rows[0].st_extent;
        
     extent = extent.split(/[ \(,\)]+/);
@@ -135,20 +64,22 @@
 
   });
 
-
-  $.ajax(dataAjaxSettings).done(function (response) {
+  // data request
+  $.ajax(dataAjaxSettings).then(function (response) {
     data = response;
   });
 
-  
+  // when data and extent then
   $.when( $.ajax(extSettings), $.ajax(dataAjaxSettings)).then(function() {
     console.log("suuuuuuuup");
     console.log(bounds);
     console.log(data);
-    translate();
-    // draw(width, height, bounds, data);
+    draw(width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY);
   
   });
+
+
+  // EVENTS AND LISTENERS
 
   $("#home").click(function(){
     panX = 0;
@@ -156,100 +87,131 @@
     lastX = 0;
     lastY = 0;
     scaleFactor = 1;
-    translate();
-    // draw (width, height, bounds, data, panX, panY, scaleFactor); 
+    draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY); 
   });
-
-
-
 
   $("#transLeft").click(function(){
 
     panX -= 10;
-    translate();
-    // draw (width, height, bounds, data, panX, panY, scaleFactor); 
+    draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY); 
   });
   $("#transRight").click(function(){
 
     panX +=10;
-    translate();
-    // draw (width, height, bounds, data, panX, panY, scaleFactor); 
+    draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY); 
   });
   
 
   $("#transDown").click(function(){
 
     panY += 10;
-    translate();
-    // draw (width, height, bounds, data, panX, panY, scaleFactor); 
+    draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY); 
   });
   $("#transUp").click(function(){
 
     panY -=10;
-    translate();
-    // draw (width, height, bounds, data, panX, panY, scaleFactor); 
+    draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY); 
   });
 
   $("#zoomUp").click(function(){
     scaleFactor *= 1.5;
-    scale();
-    // draw (width, height, bounds, data, panX, panY, scaleFactor); 
+  
+    draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY); 
   });
 
   $("#zoomDown").click(function(){
     scaleFactor /= 1.5;
-    scale();
-    // draw (width, height, bounds, data, panX, panY, scaleFactor); 
-  });  
- 
-
-
-
-  function translate (){
-
-    context.clearRect(0, 0, width, height);
-    context.fillStyle = '#FF0000';
-    context.save();
-    context.translate(panX, panY);
     
-    draw (width, height, bounds, data, panX, panY, scaleFactor);
+    draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY); 
+  });
+
+  canvas.addEventListener('mousedown',function (evt){
+    
+    initX = evt.offsetX;
+    initY = evt.offsetY;
+
+  });
+
+  canvas.addEventListener('mouseup',function (evt){
+
+    endX = evt.offsetX;
+    endY = evt.offsetY;
+
+    panX = (endX - initX) + lastX;
+    panY = (endY - initY) + lastY;
+
+    if ((endX - initX)!==0) {
+      draw (width, height, bounds, data, panX, panY, scaleFactor,canvasMiddleX,canvasMiddleY); 
+      lastX = panX;
+      lastY = panY;
+    }
+
+  });
+  canvas.addEventListener('dblclick',function (evt){
+
+    zoomCenterX = evt.offsetX;  
+    zoomCenterY = evt.offsetY;
+
+    console.log(zoomCenterX,zoomCenterY);
 
 
-  }
-
-  function scale (){
-    context.clearRect(0, 0, width, height);
-    context.fillStyle = '#FF0000';
-    context.save();
-    context.transform(scaleFactor,0,0,scaleFactor,-(scaleFactor-1)*canvas.width/2,-(scaleFactor-1)*canvas.height/2);
-    draw (width, height, bounds, data, panX, panY, scaleFactor);
-  }
+    scaleFactor *= 1.5;
+  
+    draw (width, height, bounds, data, panX, panY,scaleFactor,zoomCenterX,zoomCenterY);
 
 
+  }, false);
 
-  function draw (width, height, bounds, data, panX, panY, scaleFactor) {
+
+  $(document).on('keydown', function ( e ) {
+    
+
+    if ((e.metaKey || e.ctrlKey) && ( e.which == 187 || e.which == 43 || e.which == 61) ) {
+        
+        zoomCenterX = width/2;  
+        zoomCenterY = height/2;
+
+        scaleFactor *= 1.5;
+
+        
+
+        draw (width, height, bounds, data, panX, panY, scaleFactor,canvasMiddleX,canvasMiddleY); 
+    }
+    else if ((e.metaKey || e.ctrlKey) && ( e.which == 189) ) {
+      
+      zoomCenterX = width/2;  
+      zoomCenterY = height/2;
+
+      scaleFactor /= 1.5;
+      draw (width, height, bounds, data, panX, panY, scaleFactor,canvasMiddleX,canvasMiddleY); 
+    }
+  });
+
+
+  // DRAW AND PROJECTION FUNCTIONS
+
+
+  
+  function draw (width, height, bounds, data, panX, panY, scaleFactor, zoomToX, zoomToY) {
     var coords, point, latitude, longitude, xScale, yScale, scale;
 
-    // Get the drawing context from our <canvas> and
-    // set the fill to determine what color our map will be.
 
     
-    // context.clearRect(0, 0, width, height);
-    // context.fillStyle = '#FF0000';
-    // context.save();
-    // context.translate(panX, panY);
-    // context.scale(scaleFactor, scaleFactor);
+    context.clearRect(0, 0, width, height);
+    context.fillStyle = '#00BCD4';
+    context.save();
+    context.translate(panX, panY);
+    context.transform(scaleFactor,0,0,scaleFactor,-(scaleFactor-1)*zoomToX,-(scaleFactor-1)*zoomToY);
 
   
     
 
-    // Determine how much to scale our coordinates by
+    // Determine  scale 
     xScale = width / Math.abs(bounds.xMax - bounds.xMin);
     yScale = height / Math.abs(bounds.yMax - bounds.yMin);
     scale = xScale < yScale ? xScale : yScale;
 
-    // Again, we want to use the “features” key of
-    // the FeatureCollection
+
     data = data.features;
 
     // Loop over the features…
@@ -275,29 +237,41 @@
 
         // If this is the first coordinate in a shape, start a new path
         if (j === 0) {
-          // this.context.beginPath();
-          // this.context.moveTo(point.x, point.y);
 
           context.beginPath();
           context.moveTo(point.x, point.y);
-          
-
         // Otherwise just keep drawing
         } else {
-          // this.context.lineTo(point.x, point.y); 
 
           context.lineTo(point.x, point.y); 
-          
         }
       }
 
-      // Fill the path we just finished drawing with color
-      // this.context.fill();
-      context.fill();
-      
+      // select render color
+      if (data[i].properties.numfloors === 0) {
+        context.fillStyle = '#bfd3e6';
+      }
+      else if (data[i].properties.numfloors > 0 && data[i].properties.numfloors <= 5) {
+        context.fillStyle = '#9ebcda';
+      }
+      else if (data[i].properties.numfloors > 5 && data[i].properties.numfloors <= 15) {
+        context.fillStyle = '#8c96c6';
+      }
+      else if (data[i].properties.numfloors > 15 && data[i].properties.numfloors <= 30) {
+        context.fillStyle = '#8c6bb1';
+      }
+      else if (data[i].properties.numfloors > 30 && data[i].properties.numfloors <= 60) {
+        context.fillStyle = '#88419d';
+      }
+      else if (data[i].properties.numfloors > 60) {
+        context.fillStyle = '#6e016b';
+      }
+
+
+      // Fill the path
+      context.fill();    
       //context.stroke();
     }
-
     context.restore();
   }
 

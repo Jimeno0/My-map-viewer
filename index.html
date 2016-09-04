@@ -1,46 +1,179 @@
 <!DOCTYPE html>
 <html>
+<head>
+  <title>My map viewer</title>
+  <style type="text/css">
 
-<style type="text/css">
-  #myCanvas{
-    display: block;
-    border:5px solid #000000;
-    /*width: 800px;*/
-    /*height:600px;*/
-    margin:auto;
-  }
-</style>
+    @font-face {
+       font-family: roboto;
+       src: url(assets/OpenSans-Regular.ttf);
+    }
+    body {
+       font-family: roboto;
+       margin:0;
+    }
+    a {
+      text-decoration: none;
+    }
+    a:hover {
+      color: #B3E5FC;
+    }
+    #myCanvas{   
+      cursor:move;
+      background-color: rgba(158, 167, 184, 0.2);
+    }
+    #contentDiv {
+      position: relative;
+    }
+    #zoomDiv{
+      display: inline-flex;
+      flex-direction: column;
+      position: absolute;
+      left: 15px;
+      top:15px;
+      z-index: 1;    
+    }
 
+    .my-button-class {
+      background-color: #29B6F6;
+      border: none;
+      cursor: pointer;
+      -webkit-transition-duration: 0.4s;
+      transition-duration: 0.4s;
+      box-shadow: 5px 5px 5px grey;
+    }
 
+     .my-button-class:hover {
+      background-color: #B3E5FC;
+      color: white;
+    }
+
+    #headderBar {
+      display: flex;
+      align-items: flex-start;
+      background-color: #03A9F4;
+      box-shadow: 0px 5px 5px grey;
+      z-index: 1;
+      margin-bottom: 3px;
+      padding: 10px;
+    }
+
+    #headderBar h1 {
+      margin: auto;
+      padding:0px;
+    }
+
+    #headderBar p {
+      margin: auto;
+      padding:0px;
+    }
+
+    #headderBar h1 {
+      font-size: 1.5em;
+      font-weight: normal;
+    }
+
+    #panButtonsDiv { 
+      display: inline-flex;
+      flex-direction: column;
+      width: 100px;
+      position: absolute;
+      left: 60px;
+      top:15px;
+      z-index: 1;
+    }
+
+    #panButtonsDiv div {
+      display: flex;
+      justify-content: space-between;
+    }
+    #legendDiv {
+      position: absolute;
+      bottom:30px;
+      right:15px;
+      padding:10px;
+      background-color: rgba(255, 255, 255, 0.7);
+      box-shadow: 0px 5px 5px grey;
+    }
+    
+
+    .leyendSquare {
+      display: inline-flex;
+      width: 20px;
+      height: 20px;
+      margin: 0px;
+      padding: 0px;
+    }
+  </style>
+</head>
 
 <body>
 
-<canvas id="myCanvas" >
-Your browser does not support the HTML5 canvas tag.
-</canvas>
-
-<div style="float:left;">
-<button id="transLeft">Translate left</button>
-<button id="transRight">Translate right</button>
-<br>
-<button id="transUp">Translate up</button>
-
-<button id="transDown">Translate down</button>
-</div>
-
-<div style="float:right;">
-<button id="zoomUp">zoom up</button>
-<button id="zoomDown">zoom down</button>
-</div>
-
-<div id="homediv" style="height:1000px">
-  <button id="home">Home</button>
+<div id="headderBar">
+  <h1 >
+    My map viewer
+  </h1>
+  <p >by <a href="https://Jimeno0.github.io"> Carlos Pérez Jimeno</a> </p>
 </div>
 
 
+<div id="contentDiv">
+  <div id="zoomDiv">
+    <button class="my-button-class" id="zoomUp">
+      <img src="assets/img/zoom_in.svg">
+    </button>
+    <button class="my-button-class" id="home">
+      <img src="assets/img/home.svg">
+    </button>
+    <button class="my-button-class" id="zoomDown">
+      <img src="assets/img/zoom_out.svg">
+    </button>
+  </div>
+
+  <div id="panButtonsDiv">
+    <button class="my-button-class" id="transUp">
+      <img src="assets/img/arrow_up.svg">
+    </button>
+    <div >
+      <button class="my-button-class" id="transLeft">
+        <img src="assets/img/arrow_left.svg">
+      </button>
+      <button class="my-button-class" id="transRight">
+        <img src="assets/img/arrow_right.svg">
+      </button>  
+    </div>
+    <button class="my-button-class" id="transDown">
+      <img src="assets/img/arrow_down.svg">
+    </button>
+  </div>
+
+  <div id="legendDiv" >
+    <div>
+      <span>Number of floors</span>
+      <div style="display:flex; justify-content:space-between;">
+        <span>0</span>
+        <span>104</span>
+      </div>
+      
+    </div>
+
+    <div style="display: flex">
+      <div class = "leyendSquare" style="background-color: #bfd3e6;"></div>
+      <div class = "leyendSquare" style="background-color: #9ebcda;"></div>
+      <div class = "leyendSquare"  style="background-color: #8c96c6;"></div>
+      <div class = "leyendSquare"  style="background-color: #8c6bb1;"></div>
+      <div class = "leyendSquare"  style="background-color: #88419d;"></div>
+      <div class = "leyendSquare"  style="background-color: #6e016b;"></div>
+    </div>
+  </div>
+
+  <canvas id="myCanvas" >
+  Your browser does not support the HTML5 canvas tag.
+  </canvas>
+</div>
 
 
-<script   src="bower_components/jquery/dist/jquery.min.js"   "></script>
-<script   src="main.js"></script>
+<script src="bower_components/jquery/dist/jquery.min.js"></script>
+<script src="main.js"></script>
 </body>
 </html>
