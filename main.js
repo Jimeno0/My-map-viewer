@@ -71,7 +71,7 @@
 
   // when data and extent then
   $.when( $.ajax(extSettings), $.ajax(dataAjaxSettings)).then(function() {
-    console.log("suuuuuuuup");
+    
     console.log(bounds);
     console.log(data);
     draw(width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY);
@@ -94,11 +94,13 @@
 
     panX -= 10;
     draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY); 
+    lastX = panX;
   });
   $("#transRight").click(function(){
 
     panX +=10;
     draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY); 
+    lastX = panX;
   });
   
 
@@ -106,11 +108,15 @@
 
     panY += 10;
     draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY); 
+
+    lastY = panY;
   });
   $("#transUp").click(function(){
 
     panY -=10;
     draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY); 
+    lastY = panY;
+
   });
 
   $("#zoomUp").click(function(){
@@ -151,10 +157,12 @@
 
     zoomCenterX = evt.offsetX;  
     zoomCenterY = evt.offsetY;
-
+    console.log("ponto clickado");
     console.log(zoomCenterX,zoomCenterY);
-
-
+    console.log("desplazamiento");
+    console.log(panX,panY);
+    console.log("factor de escala");
+    console.log(scaleFactor);
     scaleFactor *= 1.5;
   
     draw (width, height, bounds, data, panX, panY,scaleFactor,zoomCenterX,zoomCenterY);
@@ -166,18 +174,18 @@
   $(document).on('keydown', function ( e ) {
     
 
-    if ((e.metaKey || e.ctrlKey) && ( e.which == 187 || e.which == 43 || e.which == 61) ) {
+    if ((e.metaKey || e.ctrlKey) && ( e.which === 187 || e.which === 43 || e.which === 61) ) {
         
-        zoomCenterX = width/2;  
-        zoomCenterY = height/2;
+      zoomCenterX = width/2;  
+      zoomCenterY = height/2;
 
-        scaleFactor *= 1.5;
+      scaleFactor *= 1.5;
 
-        
+      
 
-        draw (width, height, bounds, data, panX, panY, scaleFactor,canvasMiddleX,canvasMiddleY); 
+      draw (width, height, bounds, data, panX, panY, scaleFactor,canvasMiddleX,canvasMiddleY); 
     }
-    else if ((e.metaKey || e.ctrlKey) && ( e.which == 189) ) {
+    else if ((e.metaKey || e.ctrlKey) && ( e.which === 189) ) {
       
       zoomCenterX = width/2;  
       zoomCenterY = height/2;
@@ -185,12 +193,33 @@
       scaleFactor /= 1.5;
       draw (width, height, bounds, data, panX, panY, scaleFactor,canvasMiddleX,canvasMiddleY); 
     }
+    else if (e.which === 37) {
+      panX -= 10;
+      draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY);       
+
+    }
+    else if (e.which === 39) {
+      panX += 10;
+      draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY);       
+
+    }
+    else if (e.which === 38) {
+      panY -= 10;
+      draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY);       
+
+    }
+    else if (e.which === 40) {
+      panY += 10;
+      draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY);       
+
+    }
   });
 
 
+
+
+
   // DRAW AND PROJECTION FUNCTIONS
-
-
   
   function draw (width, height, bounds, data, panX, panY, scaleFactor, zoomToX, zoomToY) {
     var coords, point, latitude, longitude, xScale, yScale, scale;
