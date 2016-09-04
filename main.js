@@ -10,7 +10,7 @@
   var width = $(document).width();
   var height = $(document).height() - headderHeight;
 
-
+  console.log("Welcome to the console log partyyyyy!! Yeeeeeehaaaa");
 
   var canvas = document.getElementById('myCanvas');
   var context = canvas.getContext('2d');
