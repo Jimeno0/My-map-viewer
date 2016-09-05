@@ -1,0 +1,112 @@
+@font-face {
+  font-family: roboto;
+  src: url(assets/OpenSans-Regular.ttf);
+}
+body {
+  font-family: roboto;
+  margin:0;
+  background-color: rgba(158, 167, 184, 0.2);
+}
+a {
+  text-decoration: none;
+  color: #E1F5FE;
+
+}
+a:hover {
+  color: #B3E5FC;
+}
+#myCanvas{   
+  cursor: -webkit-grab;
+  cursor: -moz-grab;
+  transition-timing-function: ease-out;
+  -webkit-transition-timing-function: ease-out;
+
+}
+#myCanvas:active {
+  cursor: move;
+  cursor: -webkit-grabbing;
+  cursor: -moz-grabbing; 
+}
+
+#contentDiv {
+  position: relative;
+}
+#zoomDiv{
+  display: inline-flex;
+  flex-direction: column;
+  position: absolute;
+  left: 15px;
+  top:15px;
+  z-index: 1;    
+}
+
+.my-button-class {
+  background-color: #29B6F6;
+  border: none;
+  cursor: pointer;
+  -webkit-transition-duration: 0.4s;
+  transition-duration: 0.4s;
+  box-shadow: 5px 5px 5px grey;
+}
+
+ .my-button-class:hover {
+  background-color: #B3E5FC;
+  color: white;
+}
+
+#headderBar {
+  display: flex;
+  align-items: flex-start;
+  background-color: #03A9F4;
+  box-shadow: 0px 5px 5px grey;
+  z-index: 1;
+  margin-bottom: 3px;
+  padding: 10px;
+}
+
+#headderBar h1 {
+  margin: auto;
+  padding:0px;
+}
+
+#headderBar p {
+  margin: auto;
+  padding:0px;
+}
+
+#headderBar h1 {
+  font-size: 1.5em;
+  font-weight: normal;
+}
+
+#panButtonsDiv { 
+  display: inline-flex;
+  flex-direction: column;
+  width: 100px;
+  position: absolute;
+  left: 60px;
+  top:15px;
+  z-index: 1;
+}
+
+#panButtonsDiv div {
+  display: flex;
+  justify-content: space-between;
+}
+#legendDiv {
+  position: absolute;
+  top:15px;
+  right:15px;
+  padding:10px;
+  background-color: rgba(255, 255, 255, 0.7);
+  box-shadow: 0px 5px 5px grey;
+}
+
+
+.legendSquare {
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  margin: 0px;
+  padding: 0px;
+}

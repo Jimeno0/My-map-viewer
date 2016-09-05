@@ -26,11 +26,6 @@
   canvasMiddleX =  canvas.width/2;
   canvasMiddleY =  canvas.height/2;
 
-  var canvasAnim = document.getElementById('myAnimCanvas');
-  var contextAnim = canvasAnim.getContext('2d');
-
-  canvasAnim.width = width;
-  canvasAnim.height = height;
 
   //AJAX REQUESTS
 
@@ -75,8 +70,8 @@
       console.log("all ready, then fuck yeah lets draw!!!");
       console.log(bounds);
       console.log(data);
-      draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY, context); 
-      draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY,contextAnim); 
+      draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY); 
+      draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY); 
   });
 
 
@@ -96,46 +91,41 @@
   $("#transLeft").click(function(){
 
     panX -= 10;
-    draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY); 
-    lastX = panX;
-  });
-  $("#transRight").click(function(){
-    
-    panX +=10;
-    
-    moveCanvasTo ('marginLeft');
-
+    moveCanvasTo ('marginLeft','-16px');
     setTimeout(function(){
       draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY,context); 
     }, 250);
-    // draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY,context); 
-    moveCanvasBack ('marginLeft');
-
-    function hello() {
-      alert('hello');
-    }
-    // setTimeout(function(){
-    //   draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY,contextAnim ); 
-    // }, 1000);
     lastX = panX;
+  });
 
-    
-    
-    
+  $("#transRight").click(function(){  
+
+    panX +=10;
+    moveCanvasTo ('marginLeft','16px');
+    setTimeout(function(){
+      draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY,context); 
+    }, 250);
+    lastX = panX;
   });
   
 
   $("#transDown").click(function(){
 
     panY += 10;
-    draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY); 
-
+    moveCanvasTo ('marginTop','16px');
+    setTimeout(function(){
+      draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY,context); 
+    }, 250);
     lastY = panY;
+
   });
   $("#transUp").click(function(){
 
     panY -=10;
-    draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY); 
+    moveCanvasTo ('marginTop','-16px');
+    setTimeout(function(){
+      draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY,context); 
+    }, 250);
     lastY = panY;
 
   });
@@ -166,9 +156,18 @@
 
     panX = (endX - initX) + lastX;
     panY = (endY - initY) + lastY;
+    marginX =((endX - initX)*1.7).toString(); 
+    marginY =((endY - initY)*1.7).toString();
+
+    console.log(marginY + 'px ' + marginX + 'px');
 
     if ((endX - initX)!==0) {
-      draw (width, height, bounds, data, panX, panY, scaleFactor,canvasMiddleX,canvasMiddleY); 
+
+    moveCanvasTo ('margin',marginY + 'px ' + marginX + 'px');
+    setTimeout(function(){
+      draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY,context); 
+    }, 250);
+      
       lastX = panX;
       lastY = panY;
     }
@@ -181,9 +180,6 @@
 
     zoomCenterX = lastoffsetX + relativeX;  
     zoomCenterY = lastoffsetY + relativeY;
-
-    // zoomCenterX = lastoffsetX + ((evt.offsetX - lastoffsetX)/scaleFactor);  
-    // zoomCenterY = lastoffsetY + ((evt.offsetY - lastoffsetY)/scaleFactor);
 
     
     console.log("desplazamiento");
@@ -255,17 +251,17 @@
 
   // DRAW AND PROJECTION FUNCTIONS
   
-  function draw (width, height, bounds, data, panX, panY, scaleFactor, zoomToX, zoomToY,ctx) {
+  function draw (width, height, bounds, data, panX, panY, scaleFactor, zoomToX, zoomToY) {
     var coords, point, latitude, longitude, xScale, yScale, scale;
 
 
     
-    ctx.clearRect(0, 0, width, height);
-    ctx.fillStyle = '#00BCD4';
-    ctx.save();
-    ctx.translate(panX, panY);
-    // ctx.transform(scaleFactor,0,0,scaleFactor,-(scaleFactor-1)*zoomToX,-(scaleFactor-1)*zoomToY);
-    ctx.transform(scaleFactor,0,0,scaleFactor,-(scaleFactor-1)*zoomToX,-(scaleFactor-1)*zoomToY);
+    context.clearRect(0, 0, width, height);
+    context.fillStyle = '#00BCD4';
+    context.save();
+    context.translate(panX, panY);
+    // context.transform(scaleFactor,0,0,scaleFactor,-(scaleFactor-1)*zoomToX,-(scaleFactor-1)*zoomToY);
+    context.transform(scaleFactor,0,0,scaleFactor,-(scaleFactor-1)*zoomToX,-(scaleFactor-1)*zoomToY);
   
     
 
@@ -301,41 +297,41 @@
         // If this is the first coordinate in a shape, start a new path
         if (j === 0) {
 
-          ctx.beginPath();
-          ctx.moveTo(point.x, point.y);
+          context.beginPath();
+          context.moveTo(point.x, point.y);
         // Otherwise just keep drawing
         } else {
 
-          ctx.lineTo(point.x, point.y); 
+          context.lineTo(point.x, point.y); 
         }
       }
 
       // select render color
       if (data[i].properties.numfloors === 0) {
-        ctx.fillStyle = '#bfd3e6';
+        context.fillStyle = '#bfd3e6';
       }
       else if (data[i].properties.numfloors > 0 && data[i].properties.numfloors <= 5) {
-        ctx.fillStyle = '#9ebcda';
+        context.fillStyle = '#9ebcda';
       }
       else if (data[i].properties.numfloors > 5 && data[i].properties.numfloors <= 15) {
-        ctx.fillStyle = '#8c96c6';
+        context.fillStyle = '#8c96c6';
       }
       else if (data[i].properties.numfloors > 15 && data[i].properties.numfloors <= 30) {
-        ctx.fillStyle = '#8c6bb1';
+        context.fillStyle = '#8c6bb1';
       }
       else if (data[i].properties.numfloors > 30 && data[i].properties.numfloors <= 60) {
-        ctx.fillStyle = '#88419d';
+        context.fillStyle = '#88419d';
       }
       else if (data[i].properties.numfloors > 60) {
-        ctx.fillStyle = '#6e016b';
+        context.fillStyle = '#6e016b';
       }
 
 
       // Fill the path
-      ctx.fill();    
-      //ctx.stroke();
+      context.fill();    
+      //context.stroke();
     }
-    ctx.restore();
+    context.restore();
   }
 
 
@@ -353,36 +349,17 @@
   }
 
 
-  function moveCanvasTo (margin){
-    // canvas.style.opacity = 0;
-    canvasAnim.style.opacity = 0;
-
+  function moveCanvasTo (margin, pixels){
     canvas.style.transition = '0.7s';
-    canvas.style[margin] = '16px';
-
-    // canvasAnim.style.transition = '1s';
-    // canvasAnim.style[margin] = '11px';
-    
-    
-  }
-
-  function moveCanvasBack ( margin) {
+    canvas.style[margin] = pixels;
 
     setTimeout(function(){ 
-      // canvasAnim.style[margin] = '0px';
-      // canvasAnim.style.opacity = 1;
-      // canvasAnim.style.transition = '0s';
-
-      // canvas.style.opacity = 0;
-
       canvas.style[margin] = '0px';
       canvas.style.opacity = 1;
       canvas.style.transition = '0s';
-
-      canvasAnim.style.opacity = 0;
-    }, 250);
-
+    }, 250); 
   }
+
 
 
 
