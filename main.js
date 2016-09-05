@@ -98,11 +98,20 @@
     lastX = panX;
   });
   $("#transRight").click(function(){
-
+    
     panX +=10;
-    console.log("to translate" + panX);
+    
+    console.log("desplazado¿?");
+
+
+    moveCanvasTo ('marginLeft');
+
     draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY); 
     lastX = panX;
+
+    
+    moveCanvasBack ('marginLeft');
+    
   });
   
 
@@ -331,6 +340,24 @@
     point.y = radius * Math.log(Math.tan((Math.PI / 4) + (point.y / 2)));
 
     return point;
+  }
+
+
+  function moveCanvasTo (margin){
+    canvas.style.transition = '1s';
+    canvas.style[margin] = '10px';
+    canvas.style.opacity = 0.7;
+    
+  }
+
+  function moveCanvasBack ( margin) {
+
+    setTimeout(function(){ 
+      canvas.style[margin] = '0px';
+      canvas.style.opacity = 1;
+      canvas.style.transition = '0s';
+    }, 1000);
+
   }
 
 
