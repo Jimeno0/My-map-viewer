@@ -23,13 +23,9 @@
 
   canvas.width = width;
   canvas.height = height;
-  canvasMidX =  canvas.width/2;
-  canvasMidY =  canvas.height/2;
-  // canvasMiddleX = canvasMidX - (canvasMidX/2) ;
-  // canvasMiddleY = canvasMidY - (canvasMidY/2) ;
+  canvasMiddleX =  canvas.width/2;
+  canvasMiddleY =  canvas.height/2;
 
-  canvasMiddleX = canvasMidX ;
-  canvasMiddleY = canvasMidY ;
 
   //AJAX REQUESTS
 
