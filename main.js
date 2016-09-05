@@ -6,6 +6,12 @@
   var initX, initY, endX, endY;
 
 
+  var lastoffsetX = 0;
+  var lastoffsetY = 0;
+
+  var relativeX = 0;
+  var relativeY = 0;
+
   var headderHeight = document.getElementById('headderBar').clientHeight;
   var width = $(document).width();
   var height = $(document).height() - headderHeight;
@@ -17,65 +23,58 @@
 
   canvas.width = width;
   canvas.height = height;
-  canvasMiddleX = canvas.width/2 ;
-  canvasMiddleY = canvas.height/2;
+  canvasMidX =  canvas.width/2;
+  canvasMidY =  canvas.height/2;
+  // canvasMiddleX = canvasMidX - (canvasMidX/2) ;
+  // canvasMiddleY = canvasMidY - (canvasMidY/2) ;
+
+  canvasMiddleX = canvasMidX ;
+  canvasMiddleY = canvasMidY ;
 
   //AJAX REQUESTS
 
-  var extSettings = {
-    "async": true,
-    "crossDomain": true,
-    "url": "https://rambo-test.carto.com:443/api/v2/sql?q=select%20ST_Extent(the_geom)%20from%20public.mnmappluto",
-    "method": "GET",
-  };
-
-  var dataAjaxSettings = {
-    "async": true,
-    "crossDomain": true,
-    "url": "https://rambo-test.carto.com:443/api/v2/sql?format=GeoJSON&q=select%20the_geom%2C%20numfloors%20from%20public.mnmappluto",
-    "method": "GET",
-    
-  };
-  // extent request
-  $.ajax(extSettings).then(function (response) {
-    var extent = response.rows[0].st_extent;
-       
-    extent = extent.split(/[ \(,\)]+/);
-    extent.shift();
-    extent.pop();
-
-    for (i = 0; i < extent.length; i++) {
-      extent[i] = Number(extent[i]);
-    }
-    
-    bounds.xMin= extent[0];
-    bounds.yMin= extent[1];
-    bounds.xMax= extent[2];
-    bounds.yMax= extent[3];
-
-
-    minimBounds = mercator(bounds.xMin, bounds.yMin);
-    maximBounds = mercator(bounds.xMax, bounds.yMax);
-
-    bounds.xMin= minimBounds.x;
-    bounds.yMin= minimBounds.y;
-    bounds.xMax= maximBounds.x;
-    bounds.yMax= maximBounds.y;
-
-  });
-
-  // data request
-  $.ajax(dataAjaxSettings).then(function (response) {
-    data = response;
-  });
-
-  // when data and extent then
-  $.when( $.ajax(extSettings), $.ajax(dataAjaxSettings)).then(function() {
-    
-    console.log(bounds);
-    console.log(data);
-    draw(width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY);
+  $.when(
   
+    $.get("https://rambo-test.carto.com:443/api/v2/sql?q=select%20ST_Extent(the_geom)%20from%20public.mnmappluto", function(response,status) {
+      var extent = response.rows[0].st_extent;
+       
+      extent = extent.split(/[ \(,\)]+/);
+      extent.shift();
+      extent.pop();
+
+      for (i = 0; i < extent.length; i++) {
+        extent[i] = Number(extent[i]);
+      }
+      
+      bounds.xMin= extent[0];
+      bounds.yMin= extent[1];
+      bounds.xMax= extent[2];
+      bounds.yMax= extent[3];
+
+
+      minimBounds = mercator(bounds.xMin, bounds.yMin);
+      maximBounds = mercator(bounds.xMax, bounds.yMax);
+
+      bounds.xMin= minimBounds.x;
+      bounds.yMin= minimBounds.y;
+      bounds.xMax= maximBounds.x;
+      bounds.yMax= maximBounds.y;
+
+      console.log("extent status response: " + status);
+    }),
+
+    
+    $.get("https://rambo-test.carto.com:443/api/v2/sql?format=GeoJSON&q=select%20the_geom%2C%20numfloors%20from%20public.mnmappluto", function(response, status) {
+      data = response;
+      console.log("data status response: " + status);
+    })
+
+  ).then(function() {
+
+      console.log("all ready, then fuck yeah lets draw!!!");
+      console.log(bounds);
+      console.log(data);
+      draw(width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY);
   });
 
 
@@ -87,6 +86,8 @@
     lastX = 0;
     lastY = 0;
     scaleFactor = 1;
+    lastoffsetX = 0;
+    lastoffsetY = 0;
     draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY); 
   });
 
@@ -99,6 +100,7 @@
   $("#transRight").click(function(){
 
     panX +=10;
+    console.log("to translate" + panX);
     draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY); 
     lastX = panX;
   });
@@ -155,17 +157,30 @@
   });
   canvas.addEventListener('dblclick',function (evt){
 
-    zoomCenterX = evt.offsetX;  
-    zoomCenterY = evt.offsetY;
-    console.log("ponto clickado");
-    console.log(zoomCenterX,zoomCenterY);
+    relativeX = ((evt.offsetX - lastoffsetX)/scaleFactor);
+    relativeY = ((evt.offsetY - lastoffsetY)/scaleFactor);
+
+    zoomCenterX = lastoffsetX + relativeX;  
+    zoomCenterY = lastoffsetY + relativeY;
+
+    // zoomCenterX = lastoffsetX + ((evt.offsetX - lastoffsetX)/scaleFactor);  
+    // zoomCenterY = lastoffsetY + ((evt.offsetY - lastoffsetY)/scaleFactor);
+
+    
     console.log("desplazamiento");
     console.log(panX,panY);
     console.log("factor de escala");
     console.log(scaleFactor);
     scaleFactor *= 1.5;
-  
+    
+    
+    console.log("ponto clickado");
+    console.log(zoomCenterX,zoomCenterY);
+
     draw (width, height, bounds, data, panX, panY,scaleFactor,zoomCenterX,zoomCenterY);
+    lastoffsetX = zoomCenterX ;
+    lastoffsetY = zoomCenterY ;
+
 
 
   }, false);
@@ -230,8 +245,8 @@
     context.fillStyle = '#00BCD4';
     context.save();
     context.translate(panX, panY);
+    // context.transform(scaleFactor,0,0,scaleFactor,-(scaleFactor-1)*zoomToX,-(scaleFactor-1)*zoomToY);
     context.transform(scaleFactor,0,0,scaleFactor,-(scaleFactor-1)*zoomToX,-(scaleFactor-1)*zoomToY);
-
   
     
 
