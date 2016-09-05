@@ -114,9 +114,9 @@
     function hello() {
       alert('hello');
     }
-    setTimeout(function(){
-      draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY,contextAnim ); 
-    }, 1000);
+    // setTimeout(function(){
+    //   draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY,contextAnim ); 
+    // }, 1000);
     lastX = panX;
 
     
@@ -354,10 +354,14 @@
 
 
   function moveCanvasTo (margin){
-    canvas.style.opacity = 0;
+    // canvas.style.opacity = 0;
+    canvasAnim.style.opacity = 0;
 
-    canvasAnim.style.transition = '1s';
-    canvasAnim.style[margin] = '10px';
+    canvas.style.transition = '0.7s';
+    canvas.style[margin] = '16px';
+
+    // canvasAnim.style.transition = '1s';
+    // canvasAnim.style[margin] = '11px';
     
     
   }
@@ -365,12 +369,18 @@
   function moveCanvasBack ( margin) {
 
     setTimeout(function(){ 
-      canvasAnim.style[margin] = '0px';
-      canvasAnim.style.opacity = 1;
-      canvasAnim.style.transition = '0s';
+      // canvasAnim.style[margin] = '0px';
+      // canvasAnim.style.opacity = 1;
+      // canvasAnim.style.transition = '0s';
 
+      // canvas.style.opacity = 0;
+
+      canvas.style[margin] = '0px';
       canvas.style.opacity = 1;
-    }, 1000);
+      canvas.style.transition = '0s';
+
+      canvasAnim.style.opacity = 0;
+    }, 250);
 
   }
 
