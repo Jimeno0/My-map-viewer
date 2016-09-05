@@ -22,15 +22,28 @@
     #myCanvas{   
       cursor: -webkit-grab;
       cursor: -moz-grab;
-      transition: 1s;
-      transition-timing-function: ease-out;
-      -webkit-transition-timing-function: ease-out;
+
+      
       /*background-color: rgba(158, 167, 184, 0.2);*/
     }
     #myCanvas:active {
       cursor: move;
       cursor: -webkit-grabbing;
       cursor: -moz-grabbing; 
+    }
+    #myAnimCanvas{
+      /*cursor: -webkit-grab;
+      cursor: -moz-grab;*/
+      opacity: 1;
+      transition-timing-function: ease-out;
+      -webkit-transition-timing-function: ease-out;
+      z-index: -1;
+    }
+    #myAnimCanvas:active{
+      z-index: -1;
+/*      cursor: move;
+      cursor: -webkit-grabbing;
+      cursor: -moz-grabbing; */
     }
     #contentDiv {
       position: relative;
@@ -114,6 +127,10 @@
       margin: 0px;
       padding: 0px;
     }
+
+    canvas {
+      position: absolute;
+    }
   </style>
 </head>
 
@@ -127,8 +144,8 @@
 </div>
 
 
-<div id="contentDiv">
-  <div id="zoomDiv">
+<div id="contentDiv" >
+  <div id="zoomDiv" style="display: none;">
     <button class="my-button-class" id="zoomUp">
       <img src="assets/img/zoom_in.svg">
     </button>
@@ -140,7 +157,7 @@
     </button>
   </div>
 
-  <div id="panButtonsDiv">
+  <div id="panButtonsDiv" >
     <button class="my-button-class" id="transUp">
       <img src="assets/img/arrow_up.svg">
     </button>
@@ -157,29 +174,34 @@
     </button>
   </div>
 
-  <div id="legendDiv" >
+  <div id="legendDiv" style="display: none;">
     <div>
       <span>Number of floors</span>
       <div style="display:flex; justify-content:space-between;">
         <span>0</span>
         <span>104</span>
+        <div style="display: flex">
+            <div class = "leyendSquare" style="background-color: #bfd3e6;"></div>
+            <div class = "leyendSquare" style="background-color: #9ebcda;"></div>
+            <div class = "leyendSquare"  style="background-color: #8c96c6;"></div>
+            <div class = "leyendSquare"  style="background-color: #8c6bb1;"></div>
+            <div class = "leyendSquare"  style="background-color: #88419d;"></div>
+            <div class = "leyendSquare"  style="background-color: #6e016b;"></div>
+          </div>
+        </div>
       </div>
       
-    </div>
-
-    <div style="display: flex">
-      <div class = "leyendSquare" style="background-color: #bfd3e6;"></div>
-      <div class = "leyendSquare" style="background-color: #9ebcda;"></div>
-      <div class = "leyendSquare"  style="background-color: #8c96c6;"></div>
-      <div class = "leyendSquare"  style="background-color: #8c6bb1;"></div>
-      <div class = "leyendSquare"  style="background-color: #88419d;"></div>
-      <div class = "leyendSquare"  style="background-color: #6e016b;"></div>
-    </div>
   </div>
 
-  <canvas id="myCanvas" >
+
+
+  <canvas id="myCanvas">
   Your browser does not support the HTML5 canvas tag.
   </canvas>
+
+  <canvas id="myAnimCanvas"></canvas>
+
+
 </div>
 
 
