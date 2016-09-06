@@ -1,10 +1,7 @@
 
-//TRANSFORM: set transform¿?¿?¿?
-
-// (function (){
+ (function (){
   var data, bounds = {}, panX = 0, panY = 0, scaleFactor = 1.00, lastX = 0, lastY= 0;
   var initX, initY, endX, endY;
-
 
   var lastoffsetX = 0;
   var lastoffsetY = 0;
@@ -15,8 +12,6 @@
   var headderHeight = document.getElementById('headderBar').clientHeight;
   var width = $(document).width();
   var height = $(document).height() - headderHeight;
-
-  console.log("Welcome to the console log partyyyyy!! Yeeeeeehaaaa");
 
   var canvas = document.getElementById('myCanvas');
   var context = canvas.getContext('2d');
@@ -42,41 +37,33 @@
         extent[i] = Number(extent[i]);
       }
       
-      bounds.xMin= extent[0];
-      bounds.yMin= extent[1];
-      bounds.xMax= extent[2];
-      bounds.yMax= extent[3];
 
+      minimBounds = mercator(extent[0], extent[1]);
+      maximBounds = mercator(extent[2], extent[3]);
 
-      minimBounds = mercator(bounds.xMin, bounds.yMin);
-      maximBounds = mercator(bounds.xMax, bounds.yMax);
 
       bounds.xMin= minimBounds.x;
       bounds.yMin= minimBounds.y;
       bounds.xMax= maximBounds.x;
       bounds.yMax= maximBounds.y;
 
-      console.log("extent status response: " + status);
+      
     }),
 
     
     $.get("https://rambo-test.carto.com:443/api/v2/sql?format=GeoJSON&q=select%20the_geom%2C%20numfloors%20from%20public.mnmappluto", function(response, status) {
       data = response;
-      console.log("data status response: " + status);
+      
     })
 
   ).then(function() {
 
-      console.log("all ready, then fuck yeah lets draw!!!");
-      console.log(bounds);
-      console.log(data);
-      draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY); 
-      draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY); 
+    draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY); 
+    draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY); 
   });
 
 
   // EVENTS AND LISTENERS
-
   $("#home").click(function(){
     panX = 0;
     panY = 0;
@@ -91,7 +78,7 @@
   $("#transLeft").click(function(){
 
     panX -= 10;
-    moveCanvasTo ('marginLeft','-16px');
+    animateTranslation ('marginLeft','-16px');
     setTimeout(function(){
       draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY,context); 
     }, 250);
@@ -101,7 +88,7 @@
   $("#transRight").click(function(){  
 
     panX +=10;
-    moveCanvasTo ('marginLeft','16px');
+    animateTranslation ('marginLeft','16px');
     setTimeout(function(){
       draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY,context); 
     }, 250);
@@ -112,7 +99,7 @@
   $("#transDown").click(function(){
 
     panY += 10;
-    moveCanvasTo ('marginTop','16px');
+    animateTranslation ('marginTop','16px');
     setTimeout(function(){
       draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY,context); 
     }, 250);
@@ -122,7 +109,7 @@
   $("#transUp").click(function(){
 
     panY -=10;
-    moveCanvasTo ('marginTop','-16px');
+    animateTranslation ('marginTop','-16px');
     setTimeout(function(){
       draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY,context); 
     }, 250);
@@ -159,11 +146,9 @@
     marginX =((endX - initX)*1.7).toString(); 
     marginY =((endY - initY)*1.7).toString();
 
-    console.log(marginY + 'px ' + marginX + 'px');
-
     if ((endX - initX)!==0) {
 
-    moveCanvasTo ('margin',marginY + 'px ' + marginX + 'px');
+    animateTranslation ('margin',marginY + 'px ' + marginX + 'px');
     setTimeout(function(){
       draw (width, height, bounds, data, panX, panY, scaleFactor, canvasMiddleX, canvasMiddleY,context); 
     }, 250);
@@ -181,22 +166,11 @@
     zoomCenterX = lastoffsetX + relativeX;  
     zoomCenterY = lastoffsetY + relativeY;
 
-    
-    console.log("desplazamiento");
-    console.log(panX,panY);
-    console.log("factor de escala");
-    console.log(scaleFactor);
     scaleFactor *= 1.5;
-    
-    
-    console.log("ponto clickado");
-    console.log(zoomCenterX,zoomCenterY);
-
+  
     draw (width, height, bounds, data, panX, panY,scaleFactor,zoomCenterX,zoomCenterY);
     lastoffsetX = zoomCenterX ;
     lastoffsetY = zoomCenterY ;
-
-
 
   }, false);
 
@@ -260,7 +234,6 @@
     context.fillStyle = '#00BCD4';
     context.save();
     context.translate(panX, panY);
-    // context.transform(scaleFactor,0,0,scaleFactor,-(scaleFactor-1)*zoomToX,-(scaleFactor-1)*zoomToY);
     context.transform(scaleFactor,0,0,scaleFactor,-(scaleFactor-1)*zoomToX,-(scaleFactor-1)*zoomToY);
   
     
@@ -329,12 +302,12 @@
 
       // Fill the path
       context.fill();    
-      //context.stroke();
+      
     }
     context.restore();
   }
 
-
+  //Mercator projection function
   function mercator (longitude, latitude) {
     var radius = 6378137;
     var max = 85.0511287798;
@@ -348,8 +321,8 @@
     return point;
   }
 
-
-  function moveCanvasTo (margin, pixels){
+  //Function to animate translations
+  function animateTranslation (margin, pixels){
     canvas.style.transition = '0.7s';
     canvas.style[margin] = pixels;
 
@@ -360,9 +333,6 @@
     }, 250); 
   }
 
-
-
-
-// })();
+ })();
 
 

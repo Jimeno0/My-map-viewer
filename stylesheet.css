@@ -110,3 +110,29 @@ a:hover {
   margin: 0px;
   padding: 0px;
 }
+
+.lightgrayBG{
+  background-color: #bfd3e6;
+}
+.grayBG{
+  background-color: #9ebcda;
+}
+.gray-purpleBG{
+  background-color: #8c96c6;
+}
+.lightPurpleBG{
+  background-color: #8c6bb1;
+}
+.purpleBG{
+  background-color: #88419d;
+}
+.dark-purpleBG{
+  background-color: #6e016b;
+}
+.flex {
+  display: flex;
+}
+.flex-spaced {
+  display: flex;
+  justify-content:space-between;
+}
